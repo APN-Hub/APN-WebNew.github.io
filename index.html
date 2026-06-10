@@ -1060,13 +1060,14 @@ async function initFirebase(){
 
 /* ── SAVE ── */
 async function saveData(){
-  if(!FB_CONFIGURED){ saveLocal(); return; }
+  if(!fireDb || typeof _setDoc !== 'function' || typeof _doc !== 'function'){ saveLocal(); return; }
   try{
     await _setDoc(_doc(fireDb,'apn_site','content'),{db});
     await _setDoc(_doc(fireDb,'apn_site','auth'),{emails:[...auth]});
   } catch(err){
     console.error('Save error:',err);
-    toast('Save failed — check Firebase rules.');
+    toast('Save failed: ' + (err.code||'') + ' — ' + (err.message||'Unknown error'));
+    saveLocal();
   }
 }
 
