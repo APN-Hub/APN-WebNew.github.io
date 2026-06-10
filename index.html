@@ -1063,19 +1063,15 @@ async function saveData(){
   if(!FB_CONFIGURED){ saveLocal(); return; }
   if(!fireDb || typeof _setDoc !== 'function' || typeof _doc !== 'function'){ saveLocal(); return; }
   try{
-    const dbClean = JSON.parse(JSON.stringify(db, (key, val) => {
-      if(typeof val === 'string' && val.startsWith('data:')) return '';
-      return val;
-    }));
-    await _setDoc(_doc(fireDb,'apn_site','content'),{db: dbClean});
+    await _setDoc(_doc(fireDb,'apn_site','content'),{db});
     await _setDoc(_doc(fireDb,'apn_site','auth'),{emails:[...auth]});
   } catch(err){
-    console.error('Save error:', err.code, err.message);
+    console.error('Save error:',err);
     toast('Save failed: ' + (err.code||'') + ' — ' + (err.message||'Unknown error'));
     saveLocal();
   }
 }
-
+  
 async function saveLogo(src){
   if(!FB_CONFIGURED){ try{localStorage.setItem('apn_logo',src);}catch(e){} return; }
   try{ await _setDoc(_doc(fireDb,'apn_site','logo'),{src}); }
